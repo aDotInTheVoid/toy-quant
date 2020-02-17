@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 rand = {version = "0.7.3",features = ["small_rng"]}
 assert_approx_eq="1.0"
+num-traits="0.2.11"

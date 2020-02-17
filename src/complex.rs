@@ -1,6 +1,7 @@
+use num_traits::identities::{One, Zero};
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Complex {
     re: f32,
     im: f32,
@@ -37,12 +38,19 @@ impl Complex {
         Complex::new(0.0, 1.0)
     }
 
-    pub fn mag_square(&self) -> f32 {
+    pub fn mag_square(self) -> f32 {
         self.re.powi(2) + self.im.powi(2)
     }
 
-    pub fn norm(&self) -> f32 {
+    pub fn norm(self) -> f32 {
         self.re.hypot(self.im)
+    }
+
+    pub fn conj(self) -> Self {
+        Self {
+            re: self.re,
+            im: -self.im,
+        }
     }
 }
 impl Add<Complex> for Complex {
@@ -110,7 +118,7 @@ impl Div<Complex> for Complex {
         // c+di   (c+di)(c-di)     c^2 + d^2
         let denom = c.powi(2) + d.powi(2);
         let rep = a * c + b * d;
-        let imp = b * c + a * d;
+        let imp = b * c - a * d;
         Self {
             re: rep / denom,
             im: imp / denom,
@@ -150,5 +158,46 @@ impl Neg for Complex {
             re: -self.re,
             im: -self.im,
         }
+    }
+}
+
+impl Zero for Complex {
+    fn zero() -> Self {
+        0.0.into()
+    }
+    fn is_zero(&self) -> bool {
+        self == &Self::zero()
+    }
+}
+
+impl One for Complex {
+    fn one() -> Self {
+        (1.0).into()
+    }
+    fn is_one(&self) -> bool {
+        self == &Self::one()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn divide() {
+        let a = Complex::new(3.0, 2.0);
+        let b = Complex::new(4.0, -3.0);
+        assert_eq!(a / b, Complex::new(6.0 / 25.0, 17.0 / 25.0));
+        let a = Complex::new(4.0, 5.0);
+        let b = Complex::new(2.0, 6.0);
+        assert_eq!(a / b, Complex::new(19.0 / 20.0, -7.0 / 20.0));
+        let a = Complex::new(2.0, -1.0);
+        let b = Complex::new(-3.0, 6.0);
+        assert_eq!(a / b, Complex::new(-4.0 / 15.0, -1.0 / 5.0));
+        let a = Complex::new(2.0, -1.0);
+        let b = Complex::new(-3.0, 6.0);
+        assert_eq!(a / b, Complex::new(-4.0 / 15.0, -1.0 / 5.0));
+        let a = Complex::new(-6.0, -3.0);
+        let b = Complex::new(4.0, 6.0);
+        assert_eq!(a / b, Complex::new(-21.0 / 26.0, 6.0 / 13.0));
     }
 }

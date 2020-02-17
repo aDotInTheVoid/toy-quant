@@ -1,4 +1,5 @@
 use std::f32::consts::FRAC_1_SQRT_2;
+use std::ops::Neg;
 
 use assert_approx_eq::assert_approx_eq;
 use rand::prelude::*;
@@ -6,10 +7,10 @@ use rand::rngs::SmallRng;
 
 use crate::complex::Complex;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Qubit {
-    p_0: Complex,
-    p_1: Complex,
+    pub(crate) p_0: Complex,
+    pub(crate) p_1: Complex,
 }
 
 impl Qubit {
@@ -53,6 +54,13 @@ impl Qubit {
         }
     }
 
+    pub fn minus() -> Self {
+        Qubit {
+            p_0: FRAC_1_SQRT_2.into(),
+            p_1: (-FRAC_1_SQRT_2).into(),
+        }
+    }
+
     /// |ψ〉= cos(θ/2)|0〉+ e^iφ sin(θ/2)|1〉
     pub fn from_theta_phi(theta: f32, phi: f32) -> Self {
         Qubit::new(
@@ -66,6 +74,22 @@ impl Qubit {
         let ket_0: Complex = (theta / 2.0).cos().into();
         let ket_1 = Complex::exp_ix(phi) * (theta / 2.0).sin();
         Qubit::new(phase_shift * ket_0, phase_shift * ket_1)
+    }
+
+    #[cfg(test)]
+    pub fn assert_approx_eq(&self, other: &Self) {
+        assert_approx_eq!((self.p_0 - other.p_0).norm(), 0.0);
+        assert_approx_eq!((self.p_1 - other.p_1).norm(), 0.0);
+    }
+}
+
+impl Neg for Qubit {
+    type Output = Qubit;
+    fn neg(self) -> Self {
+        Self {
+            p_0: -self.p_0,
+            p_1: -self.p_1,
+        }
     }
 }
 
