@@ -1,3 +1,4 @@
+/// Matrices
 use assert_approx_eq::assert_approx_eq;
 use num_traits::identities::{one, zero, One, Zero};
 
@@ -5,6 +6,12 @@ use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use crate::complex::Complex;
 
+/// A 2x2 Matrix
+///
+/// ``` text
+/// self.0 self.1
+/// self.2 self.3
+/// ```
 #[derive(Clone, Eq, Hash, Debug, PartialEq, Default)]
 pub struct Matrix2x2<T>(pub T, pub T, pub T, pub T);
 
@@ -27,6 +34,7 @@ where
 }
 
 impl<T> Matrix2x2<T> {
+    /// Run f on every element on self
     pub fn map_inline<F>(&mut self, f: F)
     where
         F: Fn(&mut T),
@@ -37,6 +45,7 @@ impl<T> Matrix2x2<T> {
         f(&mut self.3);
     }
 
+    /// Create a matrix by applying f on every element in self
     pub fn map<F>(&self, f: F) -> Self
     where
         F: Fn(T) -> T,
@@ -45,6 +54,7 @@ impl<T> Matrix2x2<T> {
         Self(f(self.0), f(self.1), f(self.2), f(self.3))
     }
 
+    /// The [Determinant](https://en.wikipedia.org/wiki/Determinant) of self
     pub fn det(&self) -> T
     where
         T: Mul<T, Output = T> + Sub<T, Output = T> + Copy,
@@ -54,6 +64,7 @@ impl<T> Matrix2x2<T> {
     }
 
     #[rustfmt::skip]
+    /// The [transpose](https://en.wikipedia.org/wiki/Transpose)
     pub fn transpose(&self) -> Self
     where
         T: Copy,
@@ -65,6 +76,9 @@ impl<T> Matrix2x2<T> {
         )
     }
 
+    /// Calculate the [Inverse](https://en.wikipedia.org/wiki/Invertible_matrix) of the matrix
+    ///
+    /// Panics if the matrix is [Singular](https://en.wikipedia.org/wiki/Singular_matrix)
     pub fn inv(&self) -> Self
     where
         T: Div<T, Output = T> + Neg<Output = T> + Copy + Sub<T, Output = T> + Mul<T, Output = T>,
@@ -73,6 +87,7 @@ impl<T> Matrix2x2<T> {
         Self(d, -b, -c, a).map(|x| x / self.det())
     }
 
+    /// Returns the 2x2 [identity matrix](https://en.wikipedia.org/wiki/Identity_matrix)
     pub fn identity() -> Self
     where
         T: Zero + One,
@@ -82,6 +97,7 @@ impl<T> Matrix2x2<T> {
 }
 
 impl Matrix2x2<Complex> {
+    /// Panics if self and other have element more that 1.0e-6 apart
     pub fn assert_approx_eq(&self, other: &Self) {
         assert_approx_eq!(self.0.norm(), other.0.norm());
         assert_approx_eq!(self.1.norm(), other.1.norm());

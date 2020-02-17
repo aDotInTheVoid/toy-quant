@@ -1,3 +1,5 @@
+//! A single unentangled qubit
+
 use std::f32::consts::FRAC_1_SQRT_2;
 use std::ops::Neg;
 
