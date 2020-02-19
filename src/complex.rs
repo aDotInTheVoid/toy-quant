@@ -121,6 +121,9 @@ impl From<f32> for Complex {
 
 impl Div<Complex> for Complex {
     type Output = Self;
+    // We have tests for this, and clippy freaks out 
+    // when I have a addition in a division function.
+    #[allow(clippy::suspicious_arithmetic_impl)]
     fn div(self, other: Self) -> Self {
         let a = self.re;
         let b = self.im;
