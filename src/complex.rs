@@ -1,6 +1,9 @@
 //! Complex numbers
 use num_traits::identities::{One, Zero};
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::ops::{
+    Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub,
+    SubAssign,
+};
 
 /// A complex number
 #[derive(Debug, Clone, Copy, PartialEq)]

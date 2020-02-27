@@ -81,7 +81,11 @@ impl<T> Matrix2x2<T> {
     /// Panics if the matrix is [Singular](https://en.wikipedia.org/wiki/Singular_matrix)
     pub fn inv(&self) -> Self
     where
-        T: Div<T, Output = T> + Neg<Output = T> + Copy + Sub<T, Output = T> + Mul<T, Output = T>,
+        T: Div<T, Output = T>
+            + Neg<Output = T>
+            + Copy
+            + Sub<T, Output = T>
+            + Mul<T, Output = T>,
     {
         let &Self(a, b, c, d) = self;
         Self(d, -b, -c, a).map(|x| x / self.det())

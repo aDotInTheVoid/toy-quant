@@ -42,12 +42,20 @@ pub mod gates {
 
     /// Create a [z / Pauli-Z](https://en.wikipedia.org/wiki/Quantum_logic_gate#Pauli-Z_(%7F'%22%60UNIQ--postMath-00000028-QINU%60%22'%7F)_gate) gate
     pub fn z() -> UnaryGate {
-        UnaryGate::new(Matrix2x2(one(), zero(), zero(), -one::<Complex>()))
+        UnaryGate::new(Matrix2x2(
+            one(),
+            zero(),
+            zero(),
+            -one::<Complex>(),
+        ))
     }
 
     /// Create a [h / Hadamard](https://en.wikipedia.org/wiki/Quantum_logic_gate#Hadamard_(H)_gate) gate
     pub fn h() -> UnaryGate {
-        UnaryGate::new(Matrix2x2(one(), one(), one(), -one::<Complex>()).map(|x| x * FRAC_1_SQRT_2))
+        UnaryGate::new(
+            Matrix2x2(one(), one(), one(), -one::<Complex>())
+                .map(|x| x * FRAC_1_SQRT_2),
+        )
     }
 
     /// Gates from [Pauli matrices](https://en.wikipedia.org/wiki/Pauli_matrices)
@@ -59,7 +67,12 @@ pub mod gates {
         }
         /// [Pauli-Y](https://en.wikipedia.org/wiki/Quantum_logic_gate#Pauli-Y_gate)
         pub fn y() -> UnaryGate {
-            UnaryGate::new(Matrix2x2(zero(), -Complex::i(), Complex::i(), zero()))
+            UnaryGate::new(Matrix2x2(
+                zero(),
+                -Complex::i(),
+                Complex::i(),
+                zero(),
+            ))
         }
         /// [Pauli-Z](https://en.wikipedia.org/wiki/Quantum_logic_gate#Pauli-Z_(%7F'%22%60UNIQ--postMath-00000028-QINU%60%22'%7F)_gate), sometimes called Z
         pub fn z() -> UnaryGate {

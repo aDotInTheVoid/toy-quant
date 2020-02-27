@@ -20,7 +20,7 @@ impl QuantumRegister {
             qubits,
         };
 
-        // This should always be false
+        // This should always be true
         debug_assert!(Self::is_valid(&ret));
         ret
     }
@@ -45,7 +45,9 @@ impl QuantumRegister {
             current += prob;
             if current > target {
                 return ClassicalRegister {
-                    bits: bits.try_into().expect("This should never be more than 255"),
+                    bits: bits
+                        .try_into()
+                        .expect("This should never be more than 255"),
                 };
             // Set the reserve to whatever
             } else if prob != 0.0 {
@@ -70,11 +72,10 @@ mod tests {
 
     #[test]
     fn from_classical() {
-        for i in 0..255{
+        for i in 0..255 {
             let reg = QuantumRegister::from_classical(i.into());
             assert_eq!(reg.collapse(), i.into())
         }
-
     }
 
     #[test]
@@ -87,7 +88,9 @@ mod tests {
             match collapsed.bits {
                 0b00 => count_00 += 1,
                 0b11 => count_11 += 1,
-                _ => unreachable!("Bell state can only collapse to 00 or 11"),
+                _ => unreachable!(
+                    "Bell state can only collapse to 00 or 11"
+                ),
             }
         }
         assert_eq!(count_00 + count_11, 1000);

@@ -17,7 +17,8 @@ pub struct Qubit {
 
 impl Qubit {
     pub fn sample_is_zero(&self) -> bool {
-        SmallRng::from_entropy().gen_bool(self.p_0.mag_square().into())
+        SmallRng::from_entropy()
+            .gen_bool(self.p_0.mag_square().into())
     }
     pub fn sample_is_one(&self) -> bool {
         !self.sample_is_zero()
@@ -71,7 +72,11 @@ impl Qubit {
         )
     }
     /// |ψ〉= e^iγ (cos(θ/2)|0〉+e^iφ sin(θ/2)|1〉),
-    pub fn from_theta_phi_gamma(theta: f32, phi: f32, gamma: f32) -> Self {
+    pub fn from_theta_phi_gamma(
+        theta: f32,
+        phi: f32,
+        gamma: f32,
+    ) -> Self {
         let phase_shift = Complex::exp_ix(gamma);
         let ket_0: Complex = (theta / 2.0).cos().into();
         let ket_1 = Complex::exp_ix(phi) * (theta / 2.0).sin();
@@ -130,6 +135,10 @@ mod tests {
         Qubit::from_theta_phi(24.54, 5154.576);
         Qubit::from_theta_phi_gamma(35235.523, 321465.23, 5432.43);
         Qubit::from_theta_phi_gamma(12235.523, 211465.23, 21432.43);
-        Qubit::from_theta_phi_gamma(45675235.523, 56421465.23, 134432.43);
+        Qubit::from_theta_phi_gamma(
+            45675235.523,
+            56421465.23,
+            134432.43,
+        );
     }
 }

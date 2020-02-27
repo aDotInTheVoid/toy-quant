@@ -11,7 +11,11 @@ impl FromIterator<bool> for ClassicalRegister {
     fn from_iter<I: IntoIterator<Item = bool>>(iter: I) -> Self {
         let mut bits = 0;
         for (n_bits, bit) in iter.into_iter().enumerate() {
-            assert!(n_bits < 8, "Got {} bits, but the register can only hold 8", n_bits+1);
+            assert!(
+                n_bits < 8,
+                "Got {} bits, but the register can only hold 8",
+                n_bits + 1
+            );
             bits |= (bit as u8) << n_bits;
         }
         Self { bits }
@@ -46,13 +50,15 @@ mod tests {
 
     #[test]
     fn from_bit_array() {
-        let x: ClassicalRegister = [true, true, false, false, true, false, true]
-            .iter()
-            .copied()
-            .collect();
+        let x: ClassicalRegister =
+            [true, true, false, false, true, false, true]
+                .iter()
+                .copied()
+                .collect();
         assert_eq!(x.bits, 0b1010011);
 
-        let y: ClassicalRegister = [true; 0].iter().copied().collect();
+        let y: ClassicalRegister =
+            [true; 0].iter().copied().collect();
         assert_eq!(y.bits, 0);
 
         let z: ClassicalRegister = repeat(true).take(8).collect();
@@ -63,7 +69,9 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "Got 9 bits, but the register can only hold 8")]
+    #[should_panic(
+        expected = "Got 9 bits, but the register can only hold 8"
+    )]
     fn from_overfull_iter() {
         let _ = repeat(true).take(9).collect::<ClassicalRegister>();
     }
