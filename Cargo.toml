@@ -10,3 +10,14 @@ edition = "2018"
 rand = {version = "0.7.3",features = ["small_rng"]}
 assert_approx_eq="1.0"
 num-traits="0.2.11"
+
+[profile.test]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false

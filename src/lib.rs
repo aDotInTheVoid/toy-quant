@@ -1,3 +1,5 @@
+#![feature(test)]
+
 pub mod complex;
 pub mod gates;
 pub mod matrix;

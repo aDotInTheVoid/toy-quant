@@ -1,7 +1,7 @@
 use std::iter::FromIterator;
 use std::iter::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ClassicalRegister {
     pub bits: u8,
 }
@@ -11,14 +11,22 @@ impl FromIterator<bool> for ClassicalRegister {
     fn from_iter<I: IntoIterator<Item = bool>>(iter: I) -> Self {
         let mut bits = 0;
         for (n_bits, bit) in iter.into_iter().enumerate() {
+            assert!(n_bits < 8, "Got {} bits, but the register can only hold 8", n_bits+1);
             bits |= (bit as u8) << n_bits;
         }
         Self { bits }
     }
 }
 
+impl From<u8> for ClassicalRegister {
+    fn from(bits: u8) -> Self {
+        Self { bits }
+    }
+}
+
 impl ClassicalRegister {
     pub fn index(&self, index: u8) -> bool {
+        assert!(index < 8);
         ((self.bits >> index) & 1) == 1
     }
 
@@ -55,7 +63,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "attempt to shift left with overflow")]
+    #[should_panic(expected = "Got 9 bits, but the register can only hold 8")]
     fn from_overfull_iter() {
         let _ = repeat(true).take(9).collect::<ClassicalRegister>();
     }
