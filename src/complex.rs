@@ -6,6 +6,12 @@ use std::ops::{
 };
 
 /// A complex number
+///
+/// ```rust
+/// # use toy_quant::complex::Complex;
+/// let x = Complex::new(1.0, 0.0);
+/// assert_eq!(x, Complex::one());
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Complex {
     re: f32,
