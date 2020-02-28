@@ -8,9 +8,10 @@ edition = "2018"
 
 [dependencies]
 rand = {version = "0.7.3",features = ["small_rng"]}
-assert_approx_eq="1.0"
 num-traits="0.2.11"
-
+nalgebra = "0.18"
+approx="0.3.2"
+typenum="1.11.2"
 [profile.test]
 opt-level = 3
 debug = false

@@ -1,6 +1,7 @@
 /// Matrices
 use assert_approx_eq::assert_approx_eq;
 use num_traits::identities::{one, zero, One, Zero};
+use nalgebra::Matrix2;
 
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
@@ -13,7 +14,7 @@ use crate::complex::Complex;
 /// self.2 self.3
 /// ```
 #[derive(Clone, Eq, Hash, Debug, PartialEq, Default)]
-pub struct Matrix2x2<T>(pub T, pub T, pub T, pub T);
+pub struct Matrix2x2<T>(pub Matrix2<Complex>);
 
 #[rustfmt::skip]
 impl<'a, T> Mul<&'a Matrix2x2<T>> for &'a Matrix2x2<T>

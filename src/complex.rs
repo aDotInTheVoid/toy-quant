@@ -1,5 +1,7 @@
 //! Complex numbers
+use approx::{AbsDiffEq, RelativeEq};
 use num_traits::identities::{One, Zero};
+
 use std::ops::{
     Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub,
     SubAssign,
@@ -128,6 +130,12 @@ impl From<f32> for Complex {
     }
 }
 
+impl From<u8> for Complex {
+    fn from(num: u8) -> Complex {
+        Complex::from_re(num.into())
+    }
+}
+
 impl Div<Complex> for Complex {
     type Output = Self;
     // We have tests for this, and clippy freaks out
@@ -204,6 +212,41 @@ impl One for Complex {
     }
 }
 
+impl AbsDiffEq for Complex {
+    type Epsilon = <f32 as AbsDiffEq>::Epsilon;
+    fn default_epsilon() -> Self::Epsilon {
+        f32::default_epsilon()
+    }
+    fn abs_diff_eq(
+        &self,
+        other: &Self,
+        epsilon: Self::Epsilon,
+    ) -> bool {
+        f32::abs_diff_eq(&self.re, &other.re, epsilon)
+            && f32::abs_diff_eq(&self.im, &other.im, epsilon)
+    }
+}
+
+impl RelativeEq for Complex {
+    fn default_max_relative() -> <f32 as AbsDiffEq>::Epsilon {
+        f32::default_max_relative()
+    }
+
+    fn relative_eq(
+        &self,
+        other: &Self,
+        epsilon: Self::Epsilon,
+        max_relative: Self::Epsilon,
+    ) -> bool {
+        f32::relative_eq(&self.re, &other.re, epsilon, max_relative)
+            && f32::relative_eq(
+                &self.im,
+                &other.im,
+                epsilon,
+                max_relative,
+            )
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;

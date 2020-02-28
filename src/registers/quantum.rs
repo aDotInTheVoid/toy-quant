@@ -4,31 +4,40 @@ use rand;
 
 use super::classical::ClassicalRegister;
 use crate::complex::Complex;
+use crate::qubit::Qubit;
+use nalgebra::allocator::Allocator;
+use nalgebra::default_allocator::DefaultAllocator;
+use nalgebra::dimension::DimName;
+use nalgebra::dimension::*;
+use nalgebra::VectorN;
 
-pub struct QuantumRegister {
-    n_qubits: u8,
-    qubits: Vec<Complex>,
+/// `N` is the number of states = 2**num_qubits
+pub struct QuantumRegister<N: DimName>
+where
+    DefaultAllocator: Allocator<Complex, N>,
+{
+    qubits: VectorN<Complex, N>,
 }
 
-impl QuantumRegister {
+impl<N: nalgebra::dimension::DimName> QuantumRegister<N>
+where
+    DefaultAllocator: Allocator<Complex, N>,
+{
     pub fn from_classical(cr: ClassicalRegister) -> Self {
-        let mut qubits = vec![Complex::zero(); 2usize.pow(8)];
+        let mut qubits =
+            nalgebra::VectorN::<Complex, N>::from_element(
+                Complex::zero(),
+            );
         qubits[cr.bits as usize] = Complex::one();
 
-        let ret = Self {
-            n_qubits: 8,
-            qubits,
-        };
-
-        // This should always be true
-        debug_assert!(Self::is_valid(&ret));
-        ret
+        debug_assert!(Self::is_valid(&qubits));
+        QuantumRegister { qubits }
     }
 
     #[must_use]
-    fn is_valid(&self) -> bool {
+    fn is_valid(vector: &VectorN<Complex, N>) -> bool {
         let mut acc = 0.0;
-        for i in &self.qubits {
+        for i in vector.iter() {
             acc += i.mag_square()
         }
         (acc - 1.0).abs() <= 1.0e-6
@@ -66,14 +75,21 @@ impl QuantumRegister {
     }
 }
 
+impl From<Qubit> for QuantumRegister<U2> {
+    fn from(q: Qubit) -> QuantumRegister<U2> {
+        QuantumRegister { qubits: q.inner }
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
+    use typenum::consts::U256;
 
     #[test]
     fn from_classical() {
         for i in 0..255 {
-            let reg = QuantumRegister::from_classical(i.into());
+            let reg =
+                QuantumRegister::<U256>::from_classical(i.into());
             assert_eq!(reg.collapse(), i.into())
         }
     }
@@ -100,16 +116,16 @@ mod tests {
         assert!(count_11 < 575, "Too many |11>");
     }
 
-    fn bell_state() -> QuantumRegister {
+    fn bell_state() -> QuantumRegister<U4> {
         let ket_00 = 0b00;
         let ket_11 = 0b11;
-        let mut qubits = vec![Complex::zero(); 2usize.pow(2)];
+        let mut qubits =
+            nalgebra::VectorN::<Complex, U4>::from_element(
+                Complex::zero(),
+            );
         qubits[ket_00] = std::f32::consts::FRAC_1_SQRT_2.into();
         qubits[ket_11] = std::f32::consts::FRAC_1_SQRT_2.into();
-        QuantumRegister {
-            n_qubits: 2,
-            qubits,
-        }
+        QuantumRegister { qubits }
     }
 
     #[test]
