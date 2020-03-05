@@ -14,11 +14,22 @@ fn entangle_qubits(
     cnot().apply(merged)
 }
 
-fn main() {
-    let bell = entangle_qubits(Qubit::one(), Qubit::one());
+fn eval_qubits(ket_a: Qubit, ket_b: Qubit) {
+    println!("∣{}{}⟩ becomes", ket_a.sample(), ket_b.sample());
     let mut states = [0, 0, 0, 0];
-    for _ in 0..100 {
-        states[bell.collapse().bits as usize] += 1;
+    let reg = entangle_qubits(ket_a, ket_b);
+    for _ in 0..1000 {
+        states[reg.collapse().bits as usize] += 1;
     }
-    println!("{:?}", states);
+    for (idx, val) in states.iter().enumerate() {
+        println!("∣{:02b}⟩ * {}", idx, *val as f32 / 1000.0)
+    }
+    println!("");
+}
+
+fn main() {
+    eval_qubits(Qubit::zero(), Qubit::zero());
+    eval_qubits(Qubit::zero(), Qubit::one());
+    eval_qubits(Qubit::one(), Qubit::zero());
+    eval_qubits(Qubit::one(), Qubit::one());
 }

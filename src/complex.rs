@@ -142,10 +142,8 @@ impl Div<Complex> for Complex {
     // when I have a addition in a division function.
     #[allow(clippy::suspicious_arithmetic_impl)]
     fn div(self, other: Self) -> Self {
-        let a = self.re;
-        let b = self.im;
-        let c = other.re;
-        let d = other.im;
+        let Self { re: a, im: b } = self;
+        let Self { re: c, im: d } = other;
         // a+bi   (a+bi)(c-di)   (ac+bd) + i(bc-ad)
         // ---- = ------------ = ------------------
         // c+di   (c+di)(c-di)     c^2 + d^2
