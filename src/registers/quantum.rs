@@ -9,9 +9,11 @@ use nalgebra::allocator::Allocator;
 use nalgebra::default_allocator::DefaultAllocator;
 use nalgebra::dimension::DimName;
 use nalgebra::dimension::*;
+use nalgebra::Vector4;
 use nalgebra::VectorN;
 
 /// `N` is the number of states = 2**num_qubits
+#[derive(Clone, PartialEq, Debug)]
 pub struct QuantumRegister<N: DimName>
 where
     DefaultAllocator: Allocator<Complex, N>,
@@ -73,11 +75,33 @@ where
     pub fn collapse(&self) -> ClassicalRegister {
         self.collapse_with_target(rand::random::<f32>())
     }
+
+    pub fn from_vector(qubits: VectorN<Complex, N>) -> Self {
+        Self { qubits }
+    }
+
+    pub fn into_vector(self) -> VectorN<Complex, N> {
+        self.qubits
+    }
 }
 
 impl From<Qubit> for QuantumRegister<U2> {
     fn from(q: Qubit) -> QuantumRegister<U2> {
         QuantumRegister { qubits: q.inner }
+    }
+}
+
+impl QuantumRegister<U4> {
+    pub fn from_2_qubits(qa: Qubit, qb: Qubit) -> Self {
+        let (qa_0, qa_1) = (qa.inner.index(0), qa.inner.index(1));
+        let (qb_0, qb_1) = (qb.inner.index(0), qb.inner.index(1));
+        let ket_00 = *qa_0 * *qb_0;
+        let ket_01 = *qa_0 * *qb_1;
+        let ket_10 = *qa_1 * *qb_0;
+        let ket_11 = *qa_1 * *qb_1;
+        Self {
+            qubits: Vector4::new(ket_00, ket_01, ket_10, ket_11),
+        }
     }
 }
 #[cfg(test)]

@@ -1,12 +1,12 @@
 use crate::complex::Complex;
+use crate::registers::quantum::QuantumRegister;
 
 use approx::assert_relative_eq;
-use nalgebra;
-
+use nalgebra::U4;
 
 type Matrix = nalgebra::Matrix4<Complex>;
 type MatrixU8 = nalgebra::Matrix4<u8>;
-type Vector = nalgebra::Vector4<Complex>;
+type Register2 = QuantumRegister<U4>;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct BinaryGate {
@@ -24,8 +24,8 @@ impl BinaryGate {
         Self::new(mat.map(Complex::from))
     }
 
-    pub fn apply(&self, qubits: Vector) -> Vector {
-        self.mat * qubits
+    pub fn apply(&self, qubits: Register2) -> Register2 {
+        Register2::from_vector(self.mat * qubits.into_vector())
     }
 
     pub fn compose(&self, other: &Self) -> Self {
@@ -60,7 +60,6 @@ pub mod gates {
             0, 0, 1, 0,
         ))
     }
-
 
     pub fn swap() -> BinaryGate {
         BinaryGate::new_u8(MatrixU8::new(
@@ -107,5 +106,37 @@ mod tests {
     fn swap_propertys() {
         let x = gates::swap().mat;
         assert_relative_eq!(x * x, Matrix::identity());
+    }
+
+    #[test]
+    fn cnot_zero_one() {
+        use crate::qubit::Qubit;
+        use crate::registers::quantum::QuantumRegister;
+        let cnot = gates::cnot();
+
+        for (c_in, t_in, c_out, t_out) in [
+            (
+                Qubit::zero(),
+                Qubit::zero(),
+                Qubit::zero(),
+                Qubit::zero(),
+            ),
+            (
+                Qubit::zero(),
+                Qubit::one(),
+                Qubit::zero(),
+                Qubit::one(),
+            ),
+            (Qubit::one(), Qubit::zero(), Qubit::one(), Qubit::one()),
+            (Qubit::one(), Qubit::one(), Qubit::one(), Qubit::zero()),
+        ]
+        .iter()
+        .cloned()
+        {
+            let reg_in = QuantumRegister::from_2_qubits(c_in, t_in);
+            let reg_out =
+                QuantumRegister::from_2_qubits(c_out, t_out);
+            assert_eq!(cnot.apply(reg_in), reg_out);
+        }
     }
 }

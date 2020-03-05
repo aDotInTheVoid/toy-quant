@@ -12,13 +12,6 @@ num-traits="0.2.11"
 nalgebra = "0.18"
 approx="0.3.2"
 typenum="1.11.2"
-[profile.test]
-opt-level = 3
-debug = false
-debug-assertions = false
-overflow-checks = false
-lto = false
-panic = 'unwind'
-incremental = false
-codegen-units = 16
-rpath = false
+[profile.release]
+lto = "fat"
+codegen-units = 1
